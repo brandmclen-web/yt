@@ -1,88 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.brandmclen.yt"
-    android:versionCode="1"
-    android:versionName="1.0">
+    package="com.example.yt">
 
-    <!-- Permissions for 4K Streaming -->
+    <!-- Internet access for streaming -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+
+    <!-- Modify audio settings for equalizer feature -->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
-    <!-- Permissions for Hardware Acceleration and Video Decoding -->
-    <uses-permission android:name="android.permission.HARDWARE_TEST" />
-    <uses-permission android:name="android.permission.ACCESS_DRM_CERTIFICATES" />
-
-    <!-- Storage Permissions for Caching -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
-    <!-- Permissions for Device Features -->
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
-
-    <!-- Feature declarations for 4K support -->
+    <!-- Hardware video acceleration support -->
     <uses-feature
-        android:name="android.hardware.hdmi"
+        android:name="android.hardware.vulkan.level"
         android:required="false" />
     <uses-feature
-        android:name="android.hardware.touchscreen"
-        android:required="false" />
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="false" />
-    <uses-feature
-        android:name="android.hardware.camera.autofocus"
+        android:name="android.hardware.vulkan.version"
         android:required="false" />
 
-    <!-- Minimum SDK version supporting 4K playback -->
-    <uses-sdk
-        android:minSdkVersion="21"
-        android:targetSdkVersion="34" />
+    <!-- 4K video streaming support -->
+    <uses-feature
+        android:name="android.hardware.video.encoding"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.video.decoding"
+        android:required="false" />
+
+    <!-- Support for high-resolution displays for 4K content -->
+    <uses-feature
+        android:name="android.hardware.screen.landscape"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.screen.portrait"
+        android:required="false" />
 
     <application
         android:allowBackup="true"
-        android:debuggable="false"
-        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.YT"
-        android:usesCleartextTraffic="false">
+        android:theme="@style/Theme.YT">
 
-        <!-- Main Activity for YouTube Player -->
         <activity
             android:name=".MainActivity"
-            android:exported="true"
-            android:hardwareAccelerated="true"
-            android:screenOrientation="sensor">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- YouTube Player Activity -->
-        <activity
-            android:name=".YouTubePlayerActivity"
-            android:exported="false"
-            android:hardwareAccelerated="true"
-            android:screenOrientation="sensor"
-            android:configChanges="orientation|screenSize|smallestScreenSize|density|keyboard|keyboardHidden" />
-
-        <!-- Video Playback Service for Background Streaming -->
-        <service
-            android:name=".VideoStreamService"
-            android:exported="false"
-            android:foregroundServiceType="mediaPlayback" />
-
-        <!-- Content Provider for Video Data -->
-        <provider
-            android:name=".VideoContentProvider"
-            android:authorities="${applicationId}.provider"
-            android:exported="false" />
 
     </application>
 
