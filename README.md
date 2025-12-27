@@ -1,461 +1,814 @@
-# YouTube Audio Equalizer App
+# YT Project
 
-A powerful, feature-rich audio equalizer extension for YouTube that allows users to customize and enhance their listening experience with professional-grade audio controls.
+A comprehensive full-stack application combining Android mobile development, backend services, and Google Cloud deployment.
 
-## 📋 Table of Contents
+## Table of Contents
 
-- [Project Overview](#project-overview)
+- [Overview](#overview)
 - [Features](#features)
 - [Architecture](#architecture)
 - [Tech Stack](#tech-stack)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Deployment](#deployment)
-- [Contributing](#contributing)
-- [License](#license)
-- [Support](#support)
+- [Quick Start](#quick-start)
+- [Android Setup](#android-setup)
+- [Backend Setup](#backend-setup)
+- [Deployment to Google Cloud](#deployment-to-google-cloud)
+- [API Endpoints](#api-endpoints)
+- [Contribution Guidelines](#contribution-guidelines)
 
-## 🎯 Project Overview
+## Overview
 
-The YouTube Audio Equalizer App is a browser extension designed to enhance the audio quality and customization of YouTube videos. It provides users with intuitive controls to adjust audio frequencies, manage presets, and optimize sound settings for different content types and personal preferences.
+YT is a modern, scalable application that provides seamless integration between mobile and backend services. The project is designed with a microservices architecture, enabling independent development, testing, and deployment of different components.
 
-This project aims to bridge the gap between YouTube's basic audio controls and professional audio processing capabilities, making advanced sound engineering tools accessible to everyday users.
+The application leverages cutting-edge technologies to deliver a robust, performant, and maintainable codebase suitable for production environments.
 
-### Goals
+## Features
 
-- Provide an intuitive interface for audio equalization
-- Support multiple preset configurations
-- Maintain low latency and high performance
-- Ensure compatibility across major browsers
-- Deliver a seamless, non-intrusive user experience
+- **Cross-Platform Mobile Support**: Native Android application with intuitive UI/UX
+- **RESTful API**: Well-documented and tested API endpoints
+- **Cloud-Native Architecture**: Deployed on Google Cloud Platform with auto-scaling capabilities
+- **Authentication & Authorization**: Secure user authentication and role-based access control
+- **Data Persistence**: Reliable database with proper indexing and optimization
+- **Real-Time Updates**: WebSocket support for real-time data synchronization
+- **Comprehensive Logging**: Structured logging for monitoring and debugging
+- **Error Handling**: Graceful error handling with detailed error messages
 
-## ✨ Features
+## Architecture
 
-### Core Equalizer Features
-
-- **10-Band Equalizer**: Professional 10-band frequency adjustment (60Hz - 16kHz)
-- **Preset Library**: Pre-configured equalizer profiles for different content types
-  - Music (Rock, Pop, Jazz, Classical, Electronic)
-  - Podcasts & Audiobooks
-  - Movies & Gaming
-  - Speech Enhancement
-  - Custom user presets
-- **Real-time Audio Processing**: Instant audio adjustments with no latency
-- **Gain Control**: Master volume and boost controls
-- **Bass Boost**: Enhanced bass enhancement with separate control
-
-### User Experience Features
-
-- **Persistent Settings**: Automatically save user preferences and presets
-- **Quick Toggle**: Enable/disable equalizer with one click
-- **Visual Feedback**: Interactive frequency response visualization
-- **Keyboard Shortcuts**: Quick access to common functions
-- **Dark/Light Theme**: Adaptive theme support matching system preferences
-- **Settings Export/Import**: Backup and share configurations
-
-### Advanced Features
-
-- **Frequency Response Graph**: Real-time visualization of audio adjustments
-- **Volume Normalization**: Automatic loudness adjustment across videos
-- **Compressor**: Dynamic range compression for consistent audio levels
-- **Reverb Control**: Add or remove reverb effects
-- **Site-Specific Settings**: Different profiles for different YouTube channels or playlists
-
-## 🏗️ Architecture
-
-### System Overview
+### System Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                     Browser Extension                        │
-├──────────────────┬──────────────────────────┬───────────────┤
-│  Content Script  │   Background Service     │   Popup UI    │
-│  - DOM Injection │   - Settings Management  │ - Controls    │
-│  - Audio API     │   - Preset Storage       │ - Presets     │
-│                  │   - Sync & Updates       │ - Settings    │
-└──────────────────┴──────────────────────────┴───────────────┘
-                           │
-                    ┌──────▼────────┐
-                    │  Web Audio API │
-                    │  (Core Engine) │
-                    └────────────────┘
-                           │
-                    ┌──────▼────────┐
-                    │ YouTube Player │
-                    └────────────────┘
+┌─────────────────────────────────────────────────────┐
+│          Android Mobile Application                 │
+│  (Kotlin/Java, Jetpack, Retrofit, Room Database)   │
+└────────────────────┬────────────────────────────────┘
+                     │ HTTPS/REST/WebSocket
+                     ▼
+┌─────────────────────────────────────────────────────┐
+│             Google Cloud Load Balancer              │
+└────────────────────┬────────────────────────────────┘
+                     │
+        ┌────────────┼────────────┐
+        ▼            ▼            ▼
+   ┌────────┐  ┌────────┐  ┌────────┐
+   │  API   │  │  API   │  │  API   │ (Cloud Run/Kubernetes)
+   │Instance│  │Instance│  │Instance│
+   └────────┘  └────────┘  └────────┘
+        │            │            │
+        └────────────┼────────────┘
+                     │
+        ┌────────────┴────────────┐
+        ▼                         ▼
+   ┌──────────────┐         ┌──────────────┐
+   │   Cloud SQL  │         │ Cloud Storage│
+   │   (Database) │         │  (Assets)    │
+   └──────────────┘         └──────────────┘
 ```
 
-### Component Description
+### Component Architecture
 
-- **Content Script**: Injects the equalizer into the YouTube player and captures audio stream
-- **Background Service Worker**: Manages settings persistence, preset synchronization, and extension lifecycle
-- **Popup UI**: Provides the main user interface for controls and settings
-- **Web Audio API**: Core audio processing engine using native browser APIs
-- **Storage Layer**: IndexedDB for local persistence, Chrome Sync API for cross-device sync
+- **Android Client**: Native Android application handling UI/UX and local data persistence
+- **API Gateway**: Load balancing and request routing
+- **Backend Services**: RESTful services handling business logic
+- **Data Layer**: Cloud SQL database with proper schema management
+- **External Services**: Integration with third-party services as needed
 
-### Data Flow
+## Tech Stack
 
-1. User adjusts equalizer settings via UI
-2. Popup communicates with background service
-3. Background service updates storage and broadcasts changes
-4. Content script receives update and applies filters to audio context
-5. Real-time audio processing occurs via Web Audio nodes
-6. Visual feedback updates in real-time
+### Frontend (Android)
+- **Language**: Kotlin/Java
+- **UI Framework**: Android Jetpack (Compose/XML layouts)
+- **Networking**: Retrofit 2, OkHttp3
+- **Local Database**: Room Database
+- **Dependency Injection**: Hilt/Dagger
+- **Image Loading**: Glide/Coil
+- **Architecture Pattern**: MVVM/MVI
 
-## 🛠️ Tech Stack
+### Backend
+- **Runtime**: Node.js / Python / Java (specify as applicable)
+- **Framework**: Express.js / FastAPI / Spring Boot (specify as applicable)
+- **Database**: PostgreSQL / MySQL (Cloud SQL)
+- **ORM**: Sequelize / SQLAlchemy / Hibernate (specify as applicable)
+- **Authentication**: JWT / OAuth 2.0
+- **API Documentation**: Swagger/OpenAPI
 
-### Frontend
+### Infrastructure
+- **Deployment Platform**: Google Cloud Platform
+- **Container Orchestration**: Cloud Run / Google Kubernetes Engine (GKE)
+- **Load Balancing**: Cloud Load Balancer
+- **Database**: Cloud SQL
+- **Storage**: Cloud Storage
+- **Monitoring**: Cloud Monitoring / Cloud Logging
+- **CI/CD**: Cloud Build / GitHub Actions
 
-- **HTML5**: Semantic markup for UI structure
-- **CSS3**: Modern styling with flexbox and grid layouts
-- **JavaScript (ES6+)**: Core extension logic
-- **Canvas API**: Audio visualization rendering
-- **Material Design Icons**: UI iconography
+## Quick Start
 
-### Audio Processing
+### Prerequisites
 
-- **Web Audio API**: Native browser audio processing
-- **BiquadFilterNode**: Frequency-based filtering for EQ
-- **GainNode**: Volume and boost control
-- **DynamicsCompressorNode**: Audio compression
-- **ConvolverNode**: Reverb effects
+- **Git**: Version control
+- **Android Studio**: For Android development
+- **Node.js 16+** / **Python 3.9+** / **Java 11+**: For backend development (specify as applicable)
+- **Docker**: For containerization
+- **Google Cloud SDK**: For GCP deployment
+- **PostgreSQL/MySQL**: For local development (optional with Docker)
 
-### Storage & Sync
-
-- **Chrome Storage API**: Configuration persistence
-- **IndexedDB**: Local database for presets
-- **Chrome Sync Storage**: Cross-device synchronization
-
-### Build & Development
-
-- **Webpack**: Module bundling and asset management
-- **Babel**: JavaScript transpilation for compatibility
-- **ESLint**: Code quality and style enforcement
-- **Jest**: Unit testing framework
-- **Prettier**: Code formatting
-
-### Browser Compatibility
-
-- Chrome/Chromium 90+
-- Firefox 88+
-- Edge 90+
-- Opera 76+
-
-## 💾 Installation
-
-### Development Setup
-
-#### Prerequisites
-
-- Node.js 16+ and npm/yarn
-- Git
-- Chrome/Chromium, Firefox, or Edge browser
-- Git
-
-#### Steps
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/brandmclen-web/yt.git
-   cd yt
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
-
-3. **Build the extension**
-   ```bash
-   npm run build
-   # or for development with watch mode
-   npm run dev
-   ```
-
-4. **Load the extension in your browser**
-
-   **Chrome/Edge:**
-   - Open `chrome://extensions` or `edge://extensions`
-   - Enable "Developer mode" (top right corner)
-   - Click "Load unpacked"
-   - Select the `dist/` folder from the project
-
-   **Firefox:**
-   - Open `about:debugging`
-   - Click "This Firefox"
-   - Click "Load Temporary Add-on"
-   - Select the `manifest.json` file from the `dist/` folder
-
-5. **Verify installation**
-   - Navigate to YouTube.com
-   - You should see the equalizer icon in your extensions menu
-   - Click it to open the popup interface
-
-### User Installation
-
-Users can install the extension from official browser stores:
-
-- **Chrome Web Store**: [Link to store listing]
-- **Firefox Add-ons**: [Link to add-ons listing]
-- **Edge Add-ons**: [Link to store listing]
-
-## 🚀 Usage
-
-### Basic Usage
-
-1. **Enable the Equalizer**
-   - Click the extension icon in your browser toolbar
-   - Toggle the "Enable" switch
-
-2. **Adjust Frequencies**
-   - Use the sliders to boost or cut specific frequency bands
-   - Slider range: -20dB to +20dB
-   - Center position (0dB) = no adjustment
-
-3. **Apply Presets**
-   - Select a preset from the dropdown menu
-   - Presets instantly apply to current and future videos
-
-4. **Create Custom Preset**
-   - Adjust equalizer to your preference
-   - Click "Save as Preset"
-   - Enter a name and save
-
-### Keyboard Shortcuts
-
-- `Alt + E`: Toggle equalizer on/off
-- `Alt + R`: Reset to default settings
-- `Alt + P`: Open preset menu
-- `Alt + S`: Open settings
-
-### Settings
-
-- **Auto-enable**: Automatically enable on YouTube pages
-- **Remember Settings**: Persist across sessions
-- **Volume Normalization**: Normalize loudness levels
-- **Theme**: Choose dark or light mode
-- **Notifications**: Show/hide notifications on preset changes
-
-## 📦 Deployment
-
-### Build Process
+### Clone the Repository
 
 ```bash
-# Clean build
-npm run clean
-
-# Production build with optimizations
-npm run build:prod
-
-# Generate distribution package
-npm run package
+git clone https://github.com/brandmclen-web/yt.git
+cd yt
 ```
 
-### Staging Deployment
+### Project Structure
 
-1. Build the extension for production
-2. Upload to Chrome Web Store developer console
-3. Submit for review (typically 1-3 hours)
-4. Monitor for any review issues
+```
+yt/
+├── android/                 # Android application
+│   ├── app/
+│   ├── build.gradle
+│   └── settings.gradle
+├── backend/                 # Backend services
+│   ├── src/
+│   ├── package.json / requirements.txt / pom.xml
+│   └── Dockerfile
+├── docs/                    # Documentation
+├── .github/
+│   └── workflows/          # CI/CD workflows
+├── docker-compose.yml      # Local development setup
+└── README.md
+```
 
-### Production Release
+## Android Setup
 
-1. **Version Management**
-   - Update version in `manifest.json`
-   - Update `CHANGELOG.md` with release notes
-   - Commit changes: `git commit -m "Release v1.x.x"`
+### Prerequisites
 
-2. **Create Release Tag**
+- Android Studio Arctic Fox or newer
+- Android SDK 21+ (API level)
+- Gradle 7.0+
+- Kotlin 1.6+
+
+### Installation & Configuration
+
+1. **Open the Android Project**
    ```bash
-   git tag -a v1.x.x -m "Release version 1.x.x"
-   git push origin v1.x.x
+   cd android
    ```
 
-3. **Build for All Platforms**
+2. **Install Dependencies**
    ```bash
-   npm run build:all
+   ./gradlew build
    ```
 
-4. **Submit to Store**
-   - Chrome Web Store: Upload `dist/` folder
-   - Firefox: Upload signed package
-   - Edge: Upload via Edge Add-ons dashboard
+3. **Configure API Endpoints**
+   
+   Edit `android/app/src/main/res/values/strings.xml`:
+   ```xml
+   <resources>
+       <string name="api_base_url">https://api.example.com/v1</string>
+       <string name="websocket_url">wss://api.example.com/ws</string>
+   </resources>
+   ```
 
-5. **Publish and Announce**
-   - Publish on all store platforms
-   - Create GitHub release with changelog
-   - Announce via social media/blog
+4. **Set Up Local Properties**
+   
+   Create `android/local.properties`:
+   ```properties
+   sdk.dir=/path/to/android/sdk
+   ```
 
-### Continuous Integration
+5. **Build the Application**
+   ```bash
+   ./gradlew assemble
+   ```
 
-The project uses GitHub Actions for automated builds and testing:
+6. **Run on Emulator or Device**
+   ```bash
+   ./gradlew installDebug
+   adb shell am start -n com.example.yt/.MainActivity
+   ```
 
-- **On Pull Request**: Run tests, linting, and build verification
-- **On Push to Main**: Auto-deploy to staging
-- **On Release Tag**: Build and create release artifacts
+### Development Workflow
 
-## 🤝 Contributing
+- **Build Variants**: Debug, Release, and Staging configurations
+- **Automated Tests**: Run with `./gradlew test`
+- **Lint Checks**: Run with `./gradlew lint`
+- **Code Coverage**: Generate with `./gradlew jacocoTestReport`
 
-We welcome contributions from the community! Whether it's bug reports, feature requests, or code contributions, your input helps improve the project.
+### Signing & Release Build
+
+1. **Generate Keystore**
+   ```bash
+   keytool -genkey -v -keystore release.keystore -alias yt -keyalg RSA -keysize 2048 -validity 10000
+   ```
+
+2. **Configure Signing in `build.gradle`**
+   ```gradle
+   signingConfigs {
+       release {
+           storeFile file('release.keystore')
+           storePassword System.getenv("KEYSTORE_PASSWORD")
+           keyAlias 'yt'
+           keyPassword System.getenv("KEY_PASSWORD")
+       }
+   }
+   ```
+
+3. **Build Release APK**
+   ```bash
+   ./gradlew assembleRelease
+   ```
+
+## Backend Setup
+
+### Prerequisites
+
+- Node.js 16+ / Python 3.9+ / Java 11+ (specify as applicable)
+- Package manager (npm/yarn, pip, maven/gradle)
+- PostgreSQL/MySQL 12+
+- Redis (for caching, optional)
+
+### Installation & Configuration
+
+1. **Navigate to Backend Directory**
+   ```bash
+   cd backend
+   ```
+
+2. **Install Dependencies**
+   
+   For Node.js:
+   ```bash
+   npm install
+   ```
+   
+   For Python:
+   ```bash
+   pip install -r requirements.txt
+   ```
+   
+   For Java:
+   ```bash
+   mvn install
+   ```
+
+3. **Configure Environment Variables**
+   
+   Create `.env` file:
+   ```env
+   # Server Configuration
+   NODE_ENV=development
+   PORT=3000
+   
+   # Database Configuration
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_USER=postgres
+   DB_PASSWORD=password
+   DB_NAME=yt_db
+   
+   # Authentication
+   JWT_SECRET=your-secret-key-change-this
+   JWT_EXPIRATION=7d
+   
+   # Google Cloud
+   GCP_PROJECT_ID=your-project-id
+   GCP_SERVICE_ACCOUNT_PATH=./service-account.json
+   
+   # API Configuration
+   API_VERSION=v1
+   CORS_ORIGIN=http://localhost:3000
+   
+   # Logging
+   LOG_LEVEL=debug
+   ```
+
+4. **Database Setup**
+   
+   Create and migrate database:
+   ```bash
+   # Using Docker Compose (recommended)
+   docker-compose up -d postgres
+   
+   # Run migrations
+   npm run migrate  # or appropriate migration command
+   ```
+
+5. **Start Development Server**
+   ```bash
+   npm run dev
+   # Server running at http://localhost:3000
+   ```
+
+6. **Run Tests**
+   ```bash
+   npm test
+   ```
+
+### Development Best Practices
+
+- **Environment Variables**: Use `.env` for local configuration, never commit secrets
+- **Database Migrations**: Version control all schema changes
+- **Code Formatting**: Use ESLint/Prettier (or language equivalents)
+- **API Documentation**: Maintain Swagger/OpenAPI specifications
+- **Logging**: Use structured logging (e.g., Winston, Python logging)
+- **Error Handling**: Implement comprehensive error handling middleware
+
+## Deployment to Google Cloud
+
+### Prerequisites
+
+- Google Cloud Account with billing enabled
+- `gcloud` CLI installed and authenticated
+- Docker installed locally
+- Appropriate IAM permissions
+
+### Step 1: Prepare for Deployment
+
+1. **Create GCP Project**
+   ```bash
+   gcloud projects create yt-project
+   gcloud config set project yt-project
+   ```
+
+2. **Enable Required APIs**
+   ```bash
+   gcloud services enable \
+     cloudbuild.googleapis.com \
+     run.googleapis.com \
+     sqladmin.googleapis.com \
+     cloudresourcemanager.googleapis.com \
+     containerregistry.googleapis.com
+   ```
+
+### Step 2: Set Up Cloud SQL Database
+
+1. **Create Cloud SQL Instance**
+   ```bash
+   gcloud sql instances create yt-db \
+     --database-version=POSTGRES_14 \
+     --tier=db-f1-micro \
+     --region=us-central1 \
+     --availability-type=REGIONAL
+   ```
+
+2. **Create Database and User**
+   ```bash
+   gcloud sql databases create yt_production --instance=yt-db
+   gcloud sql users create yt_user --instance=yt-db --password
+   ```
+
+3. **Migrate Database Schema**
+   ```bash
+   # Connect to database and run migrations
+   gcloud sql connect yt-db --user=yt_user
+   # Run migration scripts
+   ```
+
+### Step 3: Configure Cloud Build
+
+1. **Create `cloudbuild.yaml` in repository root**
+   ```yaml
+   steps:
+     # Build Docker image
+     - name: 'gcr.io/cloud-builders/docker'
+       args:
+         - 'build'
+         - '-t'
+         - 'gcr.io/$PROJECT_ID/yt-backend:$SHORT_SHA'
+         - '-t'
+         - 'gcr.io/$PROJECT_ID/yt-backend:latest'
+         - '.'
+       dir: 'backend'
+   
+     # Push to Container Registry
+     - name: 'gcr.io/cloud-builders/docker'
+       args:
+         - 'push'
+         - 'gcr.io/$PROJECT_ID/yt-backend:$SHORT_SHA'
+   
+     # Deploy to Cloud Run
+     - name: 'gcr.io/cloud-builders/gke-deploy'
+       args:
+         - run
+         - --filename=k8s/
+         - --image=gcr.io/$PROJECT_ID/yt-backend:$SHORT_SHA
+         - --location=us-central1
+         - --cluster=yt-cluster
+   
+   images:
+     - 'gcr.io/$PROJECT_ID/yt-backend:$SHORT_SHA'
+     - 'gcr.io/$PROJECT_ID/yt-backend:latest'
+   
+   options:
+     machineType: 'N1_HIGHCPU_8'
+   ```
+
+2. **Connect Repository to Cloud Build**
+   ```bash
+   gcloud builds connect --repository-name=yt --repository-owner=brandmclen-web
+   ```
+
+### Step 4: Deploy Backend to Cloud Run
+
+1. **Build and Deploy**
+   ```bash
+   gcloud run deploy yt-backend \
+     --source backend \
+     --platform managed \
+     --region us-central1 \
+     --allow-unauthenticated \
+     --set-env-vars="DB_HOST=CLOUD_SQL_IP,DB_USER=yt_user,DB_PASSWORD=YOUR_PASSWORD"
+   ```
+
+2. **Configure Cloud SQL Connections**
+   ```bash
+   gcloud run services update yt-backend \
+     --add-cloudsql-instances=PROJECT_ID:us-central1:yt-db \
+     --region=us-central1
+   ```
+
+### Step 5: Set Up Load Balancer
+
+1. **Create Load Balancer**
+   ```bash
+   gcloud compute load-balancers create yt-lb \
+     --global \
+     --enable-http2
+   ```
+
+2. **Configure Backend Service**
+   ```bash
+   gcloud compute backend-services create yt-backend \
+     --global \
+     --protocol=HTTPS \
+     --health-checks=yt-health-check
+   ```
+
+### Step 6: Monitor Deployment
+
+1. **View Logs**
+   ```bash
+   gcloud logging read "resource.type=cloud_run_revision" --limit 50 --format json
+   ```
+
+2. **Set Up Monitoring Alerts**
+   ```bash
+   gcloud monitoring policies create \
+     --notification-channels=CHANNEL_ID \
+     --display-name="YT Backend Error Rate"
+   ```
+
+### CI/CD Pipeline
+
+The GitHub Actions workflow automatically:
+1. Runs tests on pull requests
+2. Builds Docker images
+3. Pushes to Container Registry
+4. Deploys to Cloud Run on merge to main
+5. Sends deployment notifications
+
+See `.github/workflows/` for detailed configuration.
+
+## API Endpoints
+
+### Base URL
+```
+Production: https://api.example.com/v1
+Staging: https://staging-api.example.com/v1
+Development: http://localhost:3000/v1
+```
+
+### Authentication
+All requests (except login/register) require a JWT token in the Authorization header:
+```
+Authorization: Bearer <token>
+```
+
+### Core Endpoints
+
+#### Authentication
+- **POST** `/auth/register` - Register new user
+  ```json
+  Request:
+  {
+    "email": "user@example.com",
+    "password": "password123",
+    "name": "John Doe"
+  }
+  
+  Response (201):
+  {
+    "id": "uuid",
+    "email": "user@example.com",
+    "name": "John Doe",
+    "token": "eyJhbGc..."
+  }
+  ```
+
+- **POST** `/auth/login` - Login user
+  ```json
+  Request:
+  {
+    "email": "user@example.com",
+    "password": "password123"
+  }
+  
+  Response (200):
+  {
+    "token": "eyJhbGc...",
+    "refreshToken": "eyJhbGc...",
+    "expiresIn": 3600
+  }
+  ```
+
+- **POST** `/auth/refresh` - Refresh token
+  ```json
+  Request:
+  {
+    "refreshToken": "eyJhbGc..."
+  }
+  
+  Response (200):
+  {
+    "token": "eyJhbGc..."
+  }
+  ```
+
+#### Users
+- **GET** `/users/profile` - Get current user profile
+- **PUT** `/users/profile` - Update user profile
+- **GET** `/users/:id` - Get user by ID
+- **DELETE** `/users/:id` - Delete user account
+
+#### Resources (Example)
+- **GET** `/resources` - List all resources with pagination
+  ```json
+  Query Parameters:
+  - page: number (default: 1)
+  - limit: number (default: 20)
+  - sort: string (default: -createdAt)
+  - filter: object
+  
+  Response (200):
+  {
+    "data": [...],
+    "pagination": {
+      "page": 1,
+      "limit": 20,
+      "total": 100,
+      "pages": 5
+    }
+  }
+  ```
+
+- **POST** `/resources` - Create resource
+- **GET** `/resources/:id` - Get resource by ID
+- **PUT** `/resources/:id` - Update resource
+- **DELETE** `/resources/:id` - Delete resource
+
+#### Health Check
+- **GET** `/health` - Service health status
+  ```json
+  Response (200):
+  {
+    "status": "healthy",
+    "timestamp": "2025-12-27T20:00:45Z",
+    "uptime": 3600,
+    "database": "connected"
+  }
+  ```
+
+### Error Responses
+
+Standard error response format:
+```json
+{
+  "error": {
+    "code": "INVALID_REQUEST",
+    "message": "Invalid request parameters",
+    "details": [
+      {
+        "field": "email",
+        "message": "Invalid email format"
+      }
+    ]
+  }
+}
+```
+
+Common Status Codes:
+- `200` - OK
+- `201` - Created
+- `400` - Bad Request
+- `401` - Unauthorized
+- `403` - Forbidden
+- `404` - Not Found
+- `409` - Conflict
+- `500` - Internal Server Error
+
+### Rate Limiting
+
+API endpoints are rate limited:
+- **Unauthenticated**: 100 requests/hour
+- **Authenticated**: 1000 requests/hour
+
+Rate limit headers:
+```
+X-RateLimit-Limit: 1000
+X-RateLimit-Remaining: 999
+X-RateLimit-Reset: 1640609645
+```
+
+### WebSocket API
+
+Connect to real-time updates:
+```javascript
+const ws = new WebSocket('wss://api.example.com/ws?token=YOUR_TOKEN');
+
+ws.onmessage = (event) => {
+  const message = JSON.parse(event.data);
+  // Handle real-time updates
+};
+
+ws.onerror = (error) => {
+  console.error('WebSocket error:', error);
+};
+```
+
+## Contribution Guidelines
 
 ### Getting Started
 
-1. **Fork the repository** on GitHub
-2. **Clone your fork** locally:
+1. **Fork the Repository**
+   ```bash
+   # On GitHub UI, click "Fork"
+   ```
+
+2. **Clone Your Fork**
    ```bash
    git clone https://github.com/YOUR_USERNAME/yt.git
    cd yt
    ```
 
-3. **Create a feature branch**:
+3. **Add Upstream Remote**
+   ```bash
+   git remote add upstream https://github.com/brandmclen-web/yt.git
+   ```
+
+### Development Workflow
+
+1. **Create Feature Branch**
    ```bash
    git checkout -b feature/your-feature-name
+   # or for bug fixes:
+   git checkout -b fix/bug-description
    ```
 
-4. **Make your changes** following the style guide
-
-5. **Test your changes**:
+2. **Commit Changes**
    ```bash
-   npm test
-   npm run lint
-   npm run build
+   git add .
+   git commit -m "feat: add new feature" -m "Detailed description of changes"
+   # or
+   git commit -m "fix: resolve issue with authentication"
    ```
 
-6. **Commit your changes**:
-   ```bash
-   git commit -m "Add feature: description of changes"
-   ```
+   Use conventional commit format:
+   - `feat:` for new features
+   - `fix:` for bug fixes
+   - `docs:` for documentation
+   - `style:` for code style changes
+   - `refactor:` for code refactoring
+   - `perf:` for performance improvements
+   - `test:` for test additions/changes
+   - `chore:` for build, dependencies, etc.
 
-7. **Push to your fork**:
+3. **Push to Your Fork**
    ```bash
    git push origin feature/your-feature-name
    ```
 
-8. **Open a Pull Request** with a clear description of your changes
+4. **Create Pull Request**
+   - Go to GitHub and create PR against `main` branch
+   - Fill in the PR template with description, changes, and testing notes
+   - Link related issues
 
-### Development Guidelines
+### Code Standards
 
-#### Code Style
+#### Android Development
+- Follow [Kotlin Coding Conventions](https://kotlinlang.org/docs/coding-conventions.html)
+- Use meaningful variable/function names
+- Add KDoc comments for public APIs
+- Ensure test coverage > 80%
+- Run `./gradlew lint` before submitting
 
-- Follow ESLint configuration automatically
-- Run `npm run format` to auto-format code
-- Use meaningful variable and function names
-- Add comments for complex logic
+#### Backend Development
+- Follow language-specific style guides
+- Maintain consistent code formatting
+- Add unit tests for new features
+- Update API documentation in Swagger/OpenAPI
+- Test database migrations thoroughly
 
-#### Testing
+### Testing Requirements
 
-- Write unit tests for new features
-- Maintain minimum 80% code coverage
-- Test across all supported browsers
-- Include integration tests for UI changes
+All contributions must include:
 
-#### Commit Messages
+1. **Unit Tests**
+   ```bash
+   # Android
+   ./gradlew test
+   
+   # Backend
+   npm test  # or appropriate command
+   ```
 
-Follow conventional commits format:
+2. **Integration Tests**
+   - Test API endpoints
+   - Test database interactions
+   - Test external service integrations
 
-```
-type(scope): subject
+3. **Code Coverage**
+   - Minimum 80% code coverage for new code
+   - Upload coverage reports to CI/CD
 
-body
+### Pull Request Checklist
 
-footer
-```
+Before submitting, ensure:
 
-Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
+- [ ] Code follows project style guidelines
+- [ ] All tests pass locally (`./gradlew test`, `npm test`)
+- [ ] Code coverage is maintained or improved
+- [ ] Documentation is updated (README, API docs, code comments)
+- [ ] Commits are well-structured with clear messages
+- [ ] No merge conflicts with `main` branch
+- [ ] No sensitive data (API keys, passwords) in code
 
-Example:
-```
-feat(equalizer): add 10-band frequency control
+### Review Process
 
-Implement BiquadFilterNode for each frequency band
-Add slider UI for intuitive control
+1. **Automated Checks**
+   - CI/CD pipeline runs tests and lint checks
+   - Code coverage reports generated
+   - Automated security scanning
 
-Fixes #123
-```
+2. **Code Review**
+   - Maintainers review code for quality and compatibility
+   - Comments and suggestions provided
+   - Request changes if needed
 
-#### Pull Request Process
-
-1. Update documentation if needed
-2. Add/update tests for changes
-3. Ensure all checks pass
-4. Request review from maintainers
-5. Address review feedback
-6. Squash commits if requested
+3. **Approval and Merge**
+   - Requires at least 2 approvals for main branch
+   - Squash and merge for clean history
+   - Automated deployment to staging (if applicable)
 
 ### Reporting Issues
 
-When reporting bugs, please include:
+1. **Use GitHub Issues**
+   - Clear, descriptive title
+   - Detailed description of the issue
+   - Steps to reproduce
+   - Expected vs actual behavior
+   - Environment details
 
-- Browser and version
-- Extension version
-- Steps to reproduce
-- Expected vs. actual behavior
-- Console error messages (if any)
-- Screenshots or video
-
-### Feature Requests
-
-Describe the feature including:
-
-- Use case/problem it solves
-- Expected behavior
-- Potential implementation approach
-- Mock-ups or examples (optional)
-
-### Code Review Process
-
-All contributions require code review by at least one maintainer:
-
-- Automated tests must pass
-- Code should follow style guide
-- Documentation must be updated
-- At least one approval required before merge
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🆘 Support
+2. **Label Issues**
+   - `bug` for bug reports
+   - `feature` for feature requests
+   - `documentation` for doc issues
+   - `good first issue` for beginners
 
 ### Getting Help
 
-- **Documentation**: Check the [docs/](docs/) folder for detailed guides
-- **FAQ**: See [docs/FAQ.md](docs/FAQ.md) for common questions
-- **Issues**: Search [GitHub Issues](https://github.com/brandmclen-web/yt/issues) for similar problems
-- **Discussions**: Join our [GitHub Discussions](https://github.com/brandmclen-web/yt/discussions)
+- **Questions**: Open a discussion in GitHub Discussions
+- **Chat**: Join our Slack/Discord community (if applicable)
+- **Documentation**: Check wiki and existing issues
+- **Email**: Contact maintainers at support@example.com
 
-### Reporting Bugs
+### Community Guidelines
 
-Found a bug? Please report it on [GitHub Issues](https://github.com/brandmclen-web/yt/issues) with:
-- Clear description of the issue
-- Steps to reproduce
-- Expected behavior
-- Actual behavior
-- Browser/version information
-
-### Security Issues
-
-For security vulnerabilities, please email security@example.com instead of using the public issue tracker.
-
-## 📊 Project Statistics
-
-- **Languages**: JavaScript, HTML, CSS
-- **Total Files**: ~50+
-- **Lines of Code**: ~5000+
-- **Test Coverage**: 85%+
-- **Active Contributors**: Community-driven
-
-## 🎉 Acknowledgments
-
-- YouTube for providing the platform
-- Web Audio API community for excellent documentation
-- Open-source community for inspiring patterns and libraries
-- All contributors and users for feedback and support
+- Be respectful and inclusive
+- Provide constructive feedback
+- Help review other PRs
+- Share knowledge and best practices
+- Report security issues responsibly
 
 ---
 
-**Made with ❤️ by [brandmclen-web](https://github.com/brandmclen-web)**
+## License
 
-For the latest updates, visit the [GitHub repository](https://github.com/brandmclen-web/yt).
+This project is licensed under the MIT License - see LICENSE file for details.
+
+## Support
+
+For support, documentation, and discussions:
+- 📧 Email: support@example.com
+- 💬 GitHub Issues: [Create an issue](https://github.com/brandmclen-web/yt/issues)
+- 📚 Documentation: [Wiki](https://github.com/brandmclen-web/yt/wiki)
+
+## Acknowledgments
+
+- Android Jetpack documentation and samples
+- Google Cloud Platform guides
+- Community contributions and feedback
+
+---
+
+**Last Updated**: 2025-12-27
+
+**Maintainers**: @brandmclen-web and team
